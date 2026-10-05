@@ -1,0 +1,42 @@
+# Carpetas autogeneradas por Unity (NO se suben)
+/[Ll]ibrary/
+/[Tt]emp/
+/[Oo]bj/
+/[Bb]uild/
+/[Bb]uilds/
+/[Ll]ogs/
+/[Uu]ser[Ss]ettings/
+/[Mm]emoryCaptures/
+/[Rr]ecordings/
+
+# Archivos de IDE (Visual Studio, Rider, VS Code)
+/.vs/
+/.vscode/
+/.idea/
+*.csproj
+*.sln
+*.suo
+*.user
+*.userprefs
+*.pidb
+*.booproj
+*.svd
+*.pdb
+*.mdb
+*.opendb
+*.VC.db
+
+# Archivos de compilación y logs
+*.apk
+*.aab
+*.unitypackage
+*.app
+sysinfo.txt
+crashlytics-build.properties
+
+# Sistema operativo
+.DS_Store
+Thumbs.db
+Desktop.ini
+
+# IMPORTANTE: NO ignorar Assets/, Packages/, ProjectSettings/ ni los archivos .meta
