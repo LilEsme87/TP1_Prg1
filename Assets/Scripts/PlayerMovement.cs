@@ -13,6 +13,9 @@ public class PlayerMovement : MonoBehaviour
     private float jumpForce;
     private float groundCheckDistance;
 
+    private Vector3 startPosition;
+    private float fallLimit;
+
     private Rigidbody rb;
     private Collider col;
     private PlayerStats stats;
@@ -35,14 +38,24 @@ public class PlayerMovement : MonoBehaviour
         jumpForce = 6f;
         groundCheckDistance = 0.15f;
 
+        startPosition = transform.position;      // punto de reinicio
+        fallLimit = startPosition.y - 15f;       // si cae más abajo, reinicia
+
         stats = new PlayerStats(velocity, acceleration);
         SetMovementStrategy(new AccelerateMovement());
-        // SetMovementStrategy(new SmoothMovement());
     }
 
     public void SetMovementStrategy(IMovementStrategy strategy)
     {
         movementStrategy = strategy;
+    }
+
+    // Vuelve al punto de inicio (lo llama el obstáculo o la caída al vacío)
+    public void ResetToStart()
+    {
+        rb.velocity = Vector3.zero; // en Unity anterior a 6: rb.velocity
+        rb.angularVelocity = Vector3.zero;
+        transform.position = startPosition;
     }
 
     // Los inputs se leen en Update...
@@ -61,10 +74,13 @@ public class PlayerMovement : MonoBehaviour
 
         if (jumpRequested && IsGrounded())
         {
-            Vector3 v = rb.velocity;
+            Vector3 v = rb.velocity; // en Unity anterior a 6: rb.velocity
             rb.velocity = new Vector3(v.x, jumpForce, v.z);
         }
         jumpRequested = false;
+
+        if (transform.position.y < fallLimit)
+            ResetToStart();
     }
 
     private bool IsGrounded()

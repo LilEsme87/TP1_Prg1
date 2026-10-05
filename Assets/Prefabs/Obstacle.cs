@@ -8,6 +8,10 @@ public class Obstacle : MonoBehaviour
     {
         if (collision.collider.CompareTag("Player"))
         {
+            PlayerMovement player = collision.collider.GetComponentInParent<PlayerMovement>();
+            if (player != null)
+                player.ResetToStart();
+
             Destroy(gameObject);
         }
     }
