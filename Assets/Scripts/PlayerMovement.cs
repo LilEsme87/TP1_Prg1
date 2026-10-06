@@ -1,8 +1,3 @@
-using System;
-using System.Collections;
-using System.Collections.Generic;
-using System.Runtime.CompilerServices;
-using UnityEditor;
 using UnityEngine;
 
 [RequireComponent(typeof(Rigidbody))]
@@ -18,6 +13,7 @@ public class PlayerMovement : MonoBehaviour
 
     private Rigidbody rb;
     private Collider col;
+    private PlayerInteraction interaction;
     private PlayerStats stats;
     private IMovementStrategy movementStrategy;
 
@@ -31,6 +27,7 @@ public class PlayerMovement : MonoBehaviour
     {
         rb = GetComponent<Rigidbody>();
         col = GetComponent<Collider>();
+        interaction = GetComponent<PlayerInteraction>();
         rb.constraints = RigidbodyConstraints.FreezeRotation; // evita que se caiga rodando
 
         velocity = 5f;
@@ -56,6 +53,10 @@ public class PlayerMovement : MonoBehaviour
         rb.velocity = Vector3.zero; // en Unity anterior a 6: rb.velocity
         rb.angularVelocity = Vector3.zero;
         transform.position = startPosition;
+
+        // La caja también vuelve a su lugar
+        if (interaction != null)
+            interaction.ResetBox();
     }
 
     // Los inputs se leen en Update...

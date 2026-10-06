@@ -39,6 +39,17 @@ public class PlayerInteraction : MonoBehaviour
             DropBox();
     }
 
+    // Lo llama PlayerMovement cuando el jugador se reinicia:
+    // la caja vuelve a su lugar original
+    public void ResetBox()
+    {
+        carriedBox = null;
+
+        PickableBox box = FindFirstObjectByType<PickableBox>();
+        if (box != null)
+            box.ResetToStart();
+    }
+
     private void TryPickUp()
     {
         // Busca la caja más cercana dentro del rango

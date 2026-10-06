@@ -8,6 +8,7 @@ public class PickableBox : MonoBehaviour
     private bool isCarried;
 
     private Vector3 startPosition;
+    private Quaternion startRotation;
     private float fallLimit;
 
     public bool IsCarried => isCarried;
@@ -18,6 +19,7 @@ public class PickableBox : MonoBehaviour
         col = GetComponent<Collider>();
 
         startPosition = transform.position;
+        startRotation = transform.rotation;
         fallLimit = startPosition.y - 15f;
     }
 
@@ -49,16 +51,26 @@ public class PickableBox : MonoBehaviour
         rb.velocity = Vector3.zero; // en Unity anterior a 6: rb.velocity
     }
 
-    // Si la caja cae al vacío, vuelve a su lugar original
+    // Vuelve a su lugar original (jugador reiniciado o caja caída al vacío)
+    public void ResetToStart()
+    {
+        isCarried = false;
+        transform.SetParent(null);
+
+        col.enabled = true;
+        rb.isKinematic = false;
+        rb.velocity = Vector3.zero; // en Unity anterior a 6: rb.velocity
+        rb.angularVelocity = Vector3.zero;
+
+        transform.position = startPosition;
+        transform.rotation = startRotation;
+    }
+
     private void FixedUpdate()
     {
         if (isCarried) return;
 
         if (transform.position.y < fallLimit)
-        {
-            rb.velocity = Vector3.zero; // en Unity anterior a 6: rb.velocity
-            rb.angularVelocity = Vector3.zero;
-            transform.position = startPosition;
-        }
+            ResetToStart();
     }
 }
