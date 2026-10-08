@@ -59,6 +59,20 @@ La victoria se activa **solo si la caja es depositada en la zona de entrega**: n
 
 ## Estructura del proyecto
 
+```
+Assets/
+  Materials/   Materiales del escenario y los objetos
+  Prefabs/     Prefabs (obstáculo, plataforma móvil, etc.)
+  Scenes/      SampleScene (escena principal)
+  Scripts/     Scripts en C#
+Packages/
+ProjectSettings/
+Screenshots/   Captura usada en este README
+```
+
+El archivo `.gitignore` excluye las carpetas autogeneradas de Unity (`Library/`, `Temp/`, `Logs/`, etc.).
+
+
 ## Capturas
 
 ### Escenario completo
@@ -81,16 +95,3 @@ La victoria se activa **solo si la caja es depositada en la zona de entrega**: n
 
 ### Victoria
 ![Pantalla de victoria](Screenshots/Meta2.png)
-
-```
-Assets/
-  Materials/   Materiales del escenario y los objetos
-  Prefabs/     Prefabs (obstáculo, plataforma móvil, etc.)
-  Scenes/      SampleScene (escena principal)
-  Scripts/     Scripts en C#
-Packages/
-ProjectSettings/
-Screenshots/   Captura usada en este README
-```
-
-El archivo `.gitignore` excluye las carpetas autogeneradas de Unity (`Library/`, `Temp/`, `Logs/`, etc.).
