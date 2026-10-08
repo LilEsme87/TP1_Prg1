@@ -62,7 +62,7 @@ La victoria se activa **solo si la caja es depositada en la zona de entrega**: n
 ```
 Assets/
   Materials/   Materiales del escenario y los objetos
-  Prefabs/     Prefabs (obstáculo, plataforma móvil, etc.)
+  Prefabs/     Prefabs (el obstaculo del spawner)
   Scenes/      SampleScene (escena principal)
   Scripts/     Scripts en C#
 Packages/
