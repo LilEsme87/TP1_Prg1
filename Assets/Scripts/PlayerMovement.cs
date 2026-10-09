@@ -50,7 +50,7 @@ public class PlayerMovement : MonoBehaviour
     // Vuelve al punto de inicio (lo llama el obstáculo o la caída al vacío)
     public void ResetToStart()
     {
-        rb.velocity = Vector3.zero; // en Unity anterior a 6: rb.velocity
+        rb.velocity = Vector3.zero; 
         rb.angularVelocity = Vector3.zero;
         transform.position = startPosition;
 
@@ -75,7 +75,7 @@ public class PlayerMovement : MonoBehaviour
 
         if (jumpRequested && IsGrounded())
         {
-            Vector3 v = rb.velocity; // en Unity anterior a 6: rb.velocity
+            Vector3 v = rb.velocity; 
             rb.velocity = new Vector3(v.x, jumpForce, v.z);
         }
         jumpRequested = false;

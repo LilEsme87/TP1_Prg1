@@ -95,3 +95,125 @@ El archivo `.gitignore` excluye las carpetas autogeneradas de Unity (`Library/`,
 
 ### Victoria
 ![Pantalla de victoria](Screenshots/Meta2.png)
+
+
+## Explicación de código
+
+Fragmentos simplificados de los scripts principales del TP. El código completo está en `Assets/Scripts/`.
+
+### 1. Invocaciones temporizadas: `Invoke()` e `InvokeRepeating()`
+
+**`Invoke()` en la plataforma móvil (`MovingPlatform.cs`).** La plataforma se mueve hacia un extremo; al llegar se detiene y `Invoke()` llama **una sola vez** a `ChangeDirection()` después de `waitTime` segundos, que invierte el sentido.
+
+```csharp
+private void Update()
+{
+    if (!isMoving) return;
+
+    transform.position = Vector3.MoveTowards(transform.position, target, speed * Time.deltaTime);
+
+    if (Vector3.Distance(transform.position, target) < 0.001f)
+    {
+        isMoving = false;
+        Invoke(nameof(ChangeDirection), waitTime); // cambio de estado temporizado
+    }
+}
+
+private void ChangeDirection()
+{
+    target = (target == pointB) ? pointA : pointB;
+    isMoving = true;
+}
+```
+
+**`InvokeRepeating()` en el generador de obstáculos (`Spawner.cs`).** Llama a `SpawnObstacle()` primero tras `startDelay` segundos y luego cada `interval` segundos. Cada instancia se elimina con `Destroy` para que no se acumulen.
+
+```csharp
+private void Start()
+{
+    InvokeRepeating(nameof(SpawnObstacle), startDelay, interval);
+}
+
+private void SpawnObstacle()
+{
+    GameObject obstacle = Instantiate(obstaclePrefab, transform.position, Quaternion.identity);
+
+    Rigidbody rb = obstacle.GetComponent<Rigidbody>();
+    rb.AddForce(launchDirection.normalized * launchSpeed, ForceMode.VelocityChange);
+
+    Destroy(obstacle, lifeTime); // evita la acumulación de objetos
+}
+```
+
+### 2. Corrutinas: Power-Up de velocidad (`PowerUp.cs`)
+
+Una corrutina es un método que puede **pausarse** con `yield` y continuar después, sin detener el juego. Acá permite escribir toda la secuencia en orden: activar el efecto, esperar, restaurar, esperar la recarga y volver a habilitar. Un estado (`Ready`, `Active`, `Cooldown`) impide reactivar el Power-Up mientras se recarga.
+
+```csharp
+private void OnTriggerEnter(Collider other)
+{
+    if (state != PowerUpState.Ready) return; // no se reactiva durante la recarga
+
+    PlayerMovement player = other.GetComponentInParent<PlayerMovement>();
+    if (player != null)
+        StartCoroutine(PowerUpRoutine(player));
+}
+
+private IEnumerator PowerUpRoutine(PlayerMovement player)
+{
+    // 1) Efecto activo
+    state = PowerUpState.Active;
+    player.Stats.Velocity = player.Stats.BaseVelocity * speedMultiplier;
+    yield return new WaitForSeconds(effectDuration);
+
+    // 2) Se restablece el estado original y comienza la recarga
+    player.Stats.ResetVelocity();
+    state = PowerUpState.Cooldown;
+    yield return new WaitForSeconds(cooldownTime);
+
+    // 3) Disponible de nuevo
+    state = PowerUpState.Ready;
+}
+```
+
+### 3. Emparentamiento con `SetParent()`: recoger y soltar la caja (`PickableBox.cs`)
+
+Al recoger la caja se la hace **hija** del punto de transporte del jugador (`CarryPoint`), por lo que lo acompaña. Mientras se carga, su Rigidbody es *kinematic* y su Collider se desactiva, para que no choque con el jugador ni altere la física. Al soltarla, `SetParent(null)` le devuelve su independencia en la jerarquía y se reactiva su física.
+
+```csharp
+public void PickUp(Transform carryPoint)
+{
+    isCarried = true;
+    rb.isKinematic = true;   // sin física propia mientras se carga
+    col.enabled = false;     // no choca con el jugador
+
+    transform.SetParent(carryPoint);
+    transform.localPosition = Vector3.zero;
+}
+
+public void Drop(Vector3 worldPosition)
+{
+    isCarried = false;
+    transform.SetParent(null);   // recupera su independencia
+    transform.position = worldPosition;
+
+    col.enabled = true;
+    rb.isKinematic = false;      // vuelve a tener física
+}
+```
+
+### 4. Detección de la entrega con Trigger (`DeliveryZone.cs`)
+
+La victoria se activa solo si lo que entra a la zona es la caja y no está siendo cargada: el ingreso del jugador por sí solo no alcanza.
+
+```csharp
+private void CheckDelivery(Collider other)
+{
+    if (delivered) return;
+
+    PickableBox box = other.GetComponent<PickableBox>();
+    if (box == null || box.IsCarried) return;
+
+    Victory();
+}
+```

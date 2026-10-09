@@ -48,7 +48,7 @@ public class PickableBox : MonoBehaviour
 
         col.enabled = true;
         rb.isKinematic = false;
-        rb.velocity = Vector3.zero; // en Unity anterior a 6: rb.velocity
+        rb.velocity = Vector3.zero;
     }
 
     // Vuelve a su lugar original (jugador reiniciado o caja caída al vacío)
@@ -59,7 +59,7 @@ public class PickableBox : MonoBehaviour
 
         col.enabled = true;
         rb.isKinematic = false;
-        rb.velocity = Vector3.zero; // en Unity anterior a 6: rb.velocity
+        rb.velocity = Vector3.zero; 
         rb.angularVelocity = Vector3.zero;
 
         transform.position = startPosition;
